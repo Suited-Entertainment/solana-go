@@ -19,7 +19,7 @@ package rpc
 import (
 	"context"
 
-	"github.com/gagliardetto/solana-go"
+	"github.com/Suited-Entertainment/solana-go"
 )
 
 // Returns the latest blockhash.

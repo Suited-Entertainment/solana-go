@@ -18,8 +18,8 @@ import (
 	"context"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/gagliardetto/solana-go"
-	"github.com/gagliardetto/solana-go/rpc"
+	"github.com/Suited-Entertainment/solana-go"
+	"github.com/Suited-Entertainment/solana-go/rpc"
 )
 
 func main() {

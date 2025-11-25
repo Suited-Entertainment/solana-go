@@ -19,8 +19,8 @@ import (
 	"fmt"
 
 	bin "github.com/gagliardetto/binary"
-	"github.com/gagliardetto/solana-go"
-	"github.com/gagliardetto/solana-go/text/format"
+	"github.com/Suited-Entertainment/solana-go"
+	"github.com/Suited-Entertainment/solana-go/text/format"
 	"github.com/gagliardetto/treeout"
 )
 
