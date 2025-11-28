@@ -18,9 +18,9 @@ import (
 	"errors"
 	"fmt"
 
-	ag_binary "github.com/gagliardetto/binary"
 	ag_solanago "github.com/Suited-Entertainment/solana-go"
 	ag_format "github.com/Suited-Entertainment/solana-go/text/format"
+	ag_binary "github.com/gagliardetto/binary"
 	ag_treeout "github.com/gagliardetto/treeout"
 )
 
@@ -55,6 +55,8 @@ type TransferChecked struct {
 	// ··········· M signer accounts.
 	Accounts ag_solanago.AccountMetaSlice `bin:"-" borsh_skip:"true"`
 	Signers  ag_solanago.AccountMetaSlice `bin:"-" borsh_skip:"true"`
+
+	ProgramID ag_solanago.PublicKey `bin:"-" borsh_skip:"true"`
 }
 
 func (obj *TransferChecked) SetAccounts(accounts []*ag_solanago.AccountMeta) error {
@@ -143,6 +145,11 @@ func (inst *TransferChecked) SetOwnerAccount(owner ag_solanago.PublicKey, multis
 	return inst
 }
 
+func (inst *TransferChecked) SetProgramID(programId ag_solanago.PublicKey) *TransferChecked {
+	inst.ProgramID = programId
+	return inst
+}
+
 // GetOwnerAccount gets the "owner" account.
 // The source account's owner/delegate.
 func (inst *TransferChecked) GetOwnerAccount() *ag_solanago.AccountMeta {
@@ -153,7 +160,9 @@ func (inst TransferChecked) Build() *Instruction {
 	return &Instruction{BaseVariant: ag_binary.BaseVariant{
 		Impl:   inst,
 		TypeID: ag_binary.TypeIDFromUint8(Instruction_TransferChecked),
-	}}
+	},
+		ProgramId: inst.ProgramID,
+	}
 }
 
 // ValidateAndBuild validates the instruction parameters and accounts;
@@ -202,7 +211,11 @@ func (inst *TransferChecked) Validate() error {
 }
 
 func (inst *TransferChecked) EncodeToTree(parent ag_treeout.Branches) {
-	parent.Child(ag_format.Program(ProgramName, ProgramID)).
+	programId := ProgramID
+	if !inst.ProgramID.Equals(ag_solanago.PublicKey{}) {
+		programId = inst.ProgramID
+	}
+	parent.Child(ag_format.Program(ProgramName, programId)).
 		//
 		ParentFunc(func(programBranch ag_treeout.Branches) {
 			programBranch.Child(ag_format.Instruction("TransferChecked")).

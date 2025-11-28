@@ -18,9 +18,9 @@ import (
 	"errors"
 	"fmt"
 
-	bin "github.com/gagliardetto/binary"
 	solana "github.com/Suited-Entertainment/solana-go"
 	format "github.com/Suited-Entertainment/solana-go/text/format"
+	bin "github.com/gagliardetto/binary"
 	treeout "github.com/gagliardetto/treeout"
 )
 
@@ -29,6 +29,7 @@ type Create struct {
 	Wallet solana.PublicKey `bin:"-" borsh_skip:"true"`
 	Mint   solana.PublicKey `bin:"-" borsh_skip:"true"`
 
+	TokenProgram solana.PublicKey `bin:"-" borsh_skip:"true"`
 	// [0] = [WRITE, SIGNER] Payer
 	// ··········· Funding account
 	//
@@ -70,6 +71,11 @@ func (inst *Create) SetMint(mint solana.PublicKey) *Create {
 	return inst
 }
 
+func (inst *Create) SetTokenProgram(tokenProgram solana.PublicKey) *Create {
+	inst.TokenProgram = tokenProgram
+	return inst
+}
+
 func (inst *Create) SetAccounts(accounts []*solana.AccountMeta) error {
 	inst.AccountMetaSlice = accounts
 	if len(accounts) < 6 {
@@ -87,6 +93,11 @@ func (inst Create) Build() *Instruction {
 		inst.Wallet,
 		inst.Mint,
 	)
+
+	tokenProgramID := solana.TokenProgramID
+	if !inst.TokenProgram.Equals(solana.PublicKey{}) {
+		tokenProgramID = inst.TokenProgram
+	}
 
 	keys := []*solana.AccountMeta{
 		{
@@ -115,7 +126,7 @@ func (inst Create) Build() *Instruction {
 			IsWritable: false,
 		},
 		{
-			PublicKey:  solana.TokenProgramID,
+			PublicKey:  tokenProgramID,
 			IsSigner:   false,
 			IsWritable: false,
 		},

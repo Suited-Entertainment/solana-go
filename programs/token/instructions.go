@@ -21,10 +21,10 @@ import (
 	"bytes"
 	"fmt"
 
-	ag_spew "github.com/davecgh/go-spew/spew"
-	ag_binary "github.com/gagliardetto/binary"
 	ag_solanago "github.com/Suited-Entertainment/solana-go"
 	ag_text "github.com/Suited-Entertainment/solana-go/text"
+	ag_spew "github.com/davecgh/go-spew/spew"
+	ag_binary "github.com/gagliardetto/binary"
 	ag_treeout "github.com/gagliardetto/treeout"
 )
 
@@ -227,6 +227,7 @@ func InstructionIDToName(id uint8) string {
 
 type Instruction struct {
 	ag_binary.BaseVariant
+	ProgramId ag_solanago.PublicKey
 }
 
 func (inst *Instruction) EncodeToTree(parent ag_treeout.Branches) {
@@ -307,6 +308,9 @@ var InstructionImplDef = ag_binary.NewVariantDefinition(
 )
 
 func (inst *Instruction) ProgramID() ag_solanago.PublicKey {
+	if !inst.ProgramId.Equals(ag_solanago.PublicKey{}) {
+		return inst.ProgramId
+	}
 	return ProgramID
 }
 

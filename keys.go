@@ -702,6 +702,19 @@ func FindAssociatedTokenAddress(
 	)
 }
 
+func FindAssociatedTokenAddressWithCustomTokenProgram(
+	wallet PublicKey,
+	mint PublicKey,
+	tokenProgram PublicKey,
+) (PublicKey, uint8, error) {
+	return findAssociatedTokenAddressAndBumpSeedWithCustomTokenProgram(
+		wallet,
+		mint,
+		SPLAssociatedTokenAccountProgramID,
+		tokenProgram,
+	)
+}
+
 func findAssociatedTokenAddressAndBumpSeed(
 	walletAddress PublicKey,
 	splTokenMintAddress PublicKey,
@@ -710,6 +723,21 @@ func findAssociatedTokenAddressAndBumpSeed(
 	return FindProgramAddress([][]byte{
 		walletAddress[:],
 		TokenProgramID[:],
+		splTokenMintAddress[:],
+	},
+		programID,
+	)
+}
+
+func findAssociatedTokenAddressAndBumpSeedWithCustomTokenProgram(
+	walletAddress PublicKey,
+	splTokenMintAddress PublicKey,
+	programID PublicKey,
+	TokenProgram PublicKey,
+) (PublicKey, uint8, error) {
+	return FindProgramAddress([][]byte{
+		walletAddress[:],
+		TokenProgram[:],
 		splTokenMintAddress[:],
 	},
 		programID,
