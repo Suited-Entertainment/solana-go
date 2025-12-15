@@ -88,16 +88,17 @@ func (inst *Create) SetAccounts(accounts []*solana.AccountMeta) error {
 }
 
 func (inst Create) Build() *Instruction {
-	// Find the associatedTokenAddress;
-	associatedTokenAddress, _, _ := solana.FindAssociatedTokenAddress(
-		inst.Wallet,
-		inst.Mint,
-	)
-
 	tokenProgramID := solana.TokenProgramID
 	if !inst.TokenProgram.Equals(solana.PublicKey{}) {
 		tokenProgramID = inst.TokenProgram
 	}
+
+	// Find the associatedTokenAddress;
+	associatedTokenAddress, _, _ := solana.FindAssociatedTokenAddressWithCustomTokenProgram(
+		inst.Wallet,
+		inst.Mint,
+		tokenProgramID,
+	)
 
 	keys := []*solana.AccountMeta{
 		{
